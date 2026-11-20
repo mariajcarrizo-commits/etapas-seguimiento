@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Etapas de seguimiento</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--fg:#1c2733;--mute:#66707c;--line:#e0dcd2;--accent:#0f5c6e;--accent-fg:#fff;--soft:#e3f0f2;--warn:#b4531a;--warn-soft:#fbeadd;--ok:#2d7a4f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141b22;--card:#1c2630;--fg:#e8edf2;--mute:#9aa6b2;--line:#2c3947;--accent:#5fc0d4;--accent-fg:#0b1a20;--soft:#1d3640;--warn:#f0a068;--warn-soft:#3a2a1e;--ok:#6cc891;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141b22;--card:#1c2630;--fg:#e8edf2;--mute:#9aa6b2;--line:#2c3947;--accent:#5fc0d4;--accent-fg:#0b1a20;--soft:#1d3640;--warn:#f0a068;--warn-soft:#3a2a1e;--ok:#6cc891;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.45 Inter,system-ui,sans-serif;padding-block:24px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:720px;margin:0 auto}
+h1{font:700 26px/1.15 "Space Grotesk",Inter,sans-serif;margin:0 0 6px;text-wrap:balance}
+.lead{color:var(--mute);margin:0 0 18px}
+.how{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 20px;padding:0;list-style:none}
+.how li{background:var(--soft);color:var(--accent);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:500}
+.tabs{display:flex;gap:6px;margin-bottom:14px}
+.tab{flex:1;border:1px solid var(--line);background:var(--card);color:var(--fg);padding:11px 8px;border-radius:10px;font:600 15px Inter,sans-serif;cursor:pointer}
+.tab[aria-selected=true]{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.hint{display:flex;justify-content:space-between;gap:8px;color:var(--mute);font-size:12.5px;margin:0 2px 8px;flex-wrap:wrap}
+ol{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.st{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 10px 10px 8px;display:grid;grid-template-columns:auto 1fr;gap:8px 10px;align-items:center}
+.st.drag{opacity:.45}.st.over{border-color:var(--accent);box-shadow:0 0 0 2px var(--soft)}
+.num{width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--accent);display:grid;place-items:center;font:700 14px "Space Grotesk",sans-serif;cursor:grab;touch-action:none;user-select:none}
+.name{width:100%;min-width:0;border:1px solid transparent;background:transparent;color:var(--fg);font:600 15.5px Inter,sans-serif;padding:7px 8px;border-radius:8px}
+.name:hover{border-color:var(--line)}.name:focus{outline:2px solid var(--accent);background:var(--bg)}
+.row2{grid-column:2;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:5px 10px;font:500 13px Inter,sans-serif;cursor:pointer;min-height:32px}
+.btn:hover{border-color:var(--accent)}
+.btn.on{background:var(--soft);color:var(--accent);border-color:var(--accent)}
+.btn.off{color:var(--mute)}
+.btn.del{color:var(--warn)}
+.sp{flex:1}
+.tag{font-size:11.5px;font-weight:600;border-radius:6px;padding:2px 7px;background:var(--warn-soft);color:var(--warn)}
+.note{grid-column:2;width:100%;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:8px;padding:8px;font:14px Inter,sans-serif;resize:vertical;min-height:54px}
+.q{grid-column:2;font-size:13px;color:var(--warn);background:var(--warn-soft);border-radius:8px;padding:6px 9px}
+.add{display:flex;gap:8px;margin-top:10px}
+.add input{flex:1;min-width:0;border:1px dashed var(--mute);background:transparent;color:var(--fg);border-radius:10px;padding:10px 12px;font:15px Inter,sans-serif}
+.add input:focus{outline:2px solid var(--accent);border-style:solid}
+.primary{background:var(--accent);color:var(--accent-fg);border:0;border-radius:10px;padding:10px 16px;font:600 14.5px Inter,sans-serif;cursor:pointer}
+.wa{display:inline-block;text-decoration:none;background:#1f9d55;color:#fff}
+.reset{background:none;border:0;color:var(--mute);text-decoration:underline;cursor:pointer;font:13px Inter,sans-serif;padding:6px 0}
+.send{margin-top:26px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.send h2{font:700 18px "Space Grotesk",sans-serif;margin:0 0 4px}
+.send p{margin:0 0 12px;color:var(--mute);font-size:14px}
+.gen{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.ok{color:var(--ok);font-weight:600;font-size:14px}
+textarea.out{width:100%;margin-top:12px;min-height:200px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:10px;padding:10px;font:13px/1.45 ui-monospace,Menlo,Consolas,monospace}
+.gen2{width:100%;margin-top:12px}
+.gen2 label{display:block;font-size:13px;color:var(--mute);margin-bottom:4px}
+.gen2 textarea{width:100%;min-height:60px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:10px;padding:8px;font:14px Inter,sans-serif}
+.foot{margin-top:18px;font-size:12.5px;color:var(--mute)}
+</style>
+<style>html{color-scheme:light dark}body{margin:0}</style>
+</head>
+<body>
+
+
+<main>
+  <h1>¿Este es el orden correcto del seguimiento?</h1>
+  <p class="lead">Es una propuesta. Corregí lo que no coincida con cómo trabajan: toca 2 minutos.</p>
+  <ul class="how">
+    <li>✏️ Tocá un nombre para cambiarlo</li>
+    <li>↕ Arrastrá el número o usá las flechas</li>
+    <li>👁 Indicá si lo ve el cliente</li>
+    <li>＋ Agregá o quitá etapas</li>
+  </ul>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-imp" aria-selected="true">Importación</button>
+    <button class="tab" role="tab" id="tab-exp" aria-selected="false">Exportación</button>
+  </div>
+  <div class="hint"><span id="count"></span><button class="reset" id="reset">Volver a la propuesta original</button></div>
+  <ol id="list"></ol>
+  <form class="add" id="addForm">
+    <input id="addInput" placeholder="Agregar una etapa que falta…" maxlength="80" autocomplete="off">
+    <button class="primary" type="submit">Agregar</button>
+  </form>
+
+  <section class="send">
+    <h2>Listo: enviar mi versión</h2>
+    <p>Se abre tu WhatsApp con el mensaje ya escrito para Majo. Solo tenés que tocar enviar.</p>
+    <div class="gen">
+      <a class="primary wa" id="wa" href="#" target="_blank" rel="noopener">Enviar a Majo por WhatsApp</a>
+      <button class="btn" id="gen" type="button">No se abre: copiar mi versión</button>
+      <span class="ok" id="okmsg" hidden>Copiado ✓</span>
+    </div>
+    <div class="gen2">
+      <label for="gen-note">Algo más que quieras agregar (opcional)</label>
+      <textarea id="gen-note" placeholder="Ej.: en la práctica el cliente pregunta mucho por…"></textarea>
+    </div>
+    <textarea class="out" id="out" readonly hidden></textarea>
+  </section>
+  <p class="foot">Los datos de esta página no son de clientes reales. Solo sirve para validar etapas y orden.</p>
+</main>
+
+<script>
+const BASE={
+  imp:[
+    ["Orden de compra",1],["Fecha de entrega acordada",1],["Envío de documentación anticipada",1],
+    ["Chequeo de la documentación",1],["Arribo",1],["PRE",1],["Pagos",1],
+    ["Aduana: canal y organismos",1],["Libramiento",1],["Entrega en el depósito del cliente",1]],
+  exp:[
+    ["Pedido",1],["Documentación",1],["Oficialización del permiso",1],
+    ["Aduana",1],["Libramiento",1],["Embarque",1]]
+};
+const LABEL={imp:"Importación",exp:"Exportación"};
+let uid=0;
+function fresh(){const s={};for(const k in BASE)s[k]=BASE[k].map(([n,c])=>({id:++uid,orig:n,name:n,client:!!c,note:"",isNew:false,showNote:false}));return s}
+let S=fresh(),cur="imp";
+try{const raw=localStorage.getItem("etapas-v1");if(raw){const p=JSON.parse(raw);if(p&&p.imp&&p.exp){S=p;uid=Math.max(uid,...[...p.imp,...p.exp].map(x=>x.id))}}}catch(e){}
+function save(){try{localStorage.setItem("etapas-v1",JSON.stringify(S))}catch(e){}refreshWa()}
+const $=id=>document.getElementById(id);
+const list=$("list");
+function origIndex(k,st){return BASE[k].findIndex(b=>b[0]===st.orig)}
+
+function render(){
+  list.innerHTML="";
+  const arr=S[cur];
+  $("count").textContent=arr.length+" etapas · "+LABEL[cur];
+  arr.forEach((st,i)=>{
+    const li=document.createElement("li");li.className="st";li.draggable=false;li.dataset.i=i;
+    const num=document.createElement("div");num.className="num";num.textContent=i+1;num.title="Arrastrar para reordenar";num.draggable=true;
+    num.addEventListener("dragstart",e=>{e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/plain",i);li.classList.add("drag");window._d=i});
+    num.addEventListener("dragend",()=>{li.classList.remove("drag");document.querySelectorAll(".over").forEach(x=>x.classList.remove("over"))});
+    li.addEventListener("dragover",e=>{e.preventDefault();li.classList.add("over")});
+    li.addEventListener("dragleave",()=>li.classList.remove("over"));
+    li.addEventListener("drop",e=>{e.preventDefault();const from=window._d;if(from==null||from===i)return;const [m]=arr.splice(from,1);arr.splice(i,0,m);window._d=null;save();render()});
+    const inp=document.createElement("input");inp.className="name";inp.value=st.name;inp.maxLength=80;inp.setAttribute("aria-label","Nombre de la etapa "+(i+1));
+    inp.addEventListener("input",()=>{st.name=inp.value;save()});
+    inp.addEventListener("keydown",e=>{if(e.key==="Enter")inp.blur()});
+    li.append(num,inp);
+
+    const r=document.createElement("div");r.className="row2";
+    const vis=btn(st.client?"👁 La ve el cliente":"🚫 Solo interna",()=>{st.client=!st.client;save();render()},st.client?"on":"off");
+    const up=btn("↑",()=>move(i,-1));up.title="Subir";up.disabled=i===0;
+    const dn=btn("↓",()=>move(i,1));dn.title="Bajar";dn.disabled=i===arr.length-1;
+    const nb=btn(st.note?"💬 Comentario":"💬",()=>{st.showNote=!st.showNote;render()},st.note?"on":"");nb.title="Agregar comentario";
+    const sp=document.createElement("span");sp.className="sp";
+    const del=btn("Quitar",()=>{arr.splice(i,1);save();render()},"del");
+    r.append(vis);
+    if(st.isNew){const t=document.createElement("span");t.className="tag";t.textContent="NUEVA";r.append(t)}
+    r.append(sp,up,dn,nb,del);
+    li.append(r);
+    if(st.orig==="PRE"&&cur==="imp"){const q=document.createElement("div");q.className="q";q.textContent="❓ ¿Qué significa “PRE” para ustedes? Escribilo en el comentario 💬 o renombrá la etapa.";li.append(q)}
+    if(st.showNote||st.note){
+      if(st.showNote||st.note){const ta=document.createElement("textarea");ta.className="note";ta.placeholder="Comentario sobre esta etapa…";ta.value=st.note;
+        ta.addEventListener("input",()=>{st.note=ta.value;save()});li.append(ta)}
+    }
+    list.append(li);
+  });
+}
+function btn(txt,fn,cls){const b=document.createElement("button");b.type="button";b.className="btn"+(cls?" "+cls:"");b.textContent=txt;b.addEventListener("click",fn);return b}
+function move(i,d){const a=S[cur];const j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];save();render()}
+
+function setTab(k){cur=k;$("tab-imp").setAttribute("aria-selected",k==="imp");$("tab-exp").setAttribute("aria-selected",k==="exp");render()}
+$("tab-imp").onclick=()=>setTab("imp");$("tab-exp").onclick=()=>setTab("exp");
+$("addForm").addEventListener("submit",e=>{e.preventDefault();const v=$("addInput").value.trim();if(!v)return;S[cur].push({id:++uid,orig:null,name:v,client:true,note:"",isNew:true,showNote:false});$("addInput").value="";save();render()});
+let armed=false;
+$("reset").onclick=()=>{
+  if(!armed){armed=true;$("reset").textContent="¿Seguro? Tocá de nuevo para borrar tus cambios";setTimeout(()=>{armed=false;$("reset").textContent="Volver a la propuesta original"},4000);return}
+  armed=false;$("reset").textContent="Volver a la propuesta original";S=fresh();save();render();$("out").hidden=true;
+};
+
+function summary(){
+  const L=[];L.push("VALIDACIÓN DE ETAPAS DE SEGUIMIENTO");L.push("");
+  for(const k of ["imp","exp"]){
+    const arr=S[k];L.push(LABEL[k].toUpperCase()+" ("+arr.length+" etapas)");
+    arr.forEach((s,i)=>{
+      const f=[];
+      if(s.isNew)f.push("etapa nueva");
+      else if(s.name.trim()!==s.orig)f.push("antes: "+s.orig);
+      f.push(s.client?"la ve el cliente":"solo interna");
+      L.push((i+1)+". "+s.name.trim()+" ["+f.join("; ")+"]"+(s.note.trim()?"\n   Comentario: "+s.note.trim():""));
+    });
+    const kept=BASE[k].map(b=>b[0]);const have=arr.filter(s=>!s.isNew).map(s=>s.orig);
+    const gone=kept.filter(n=>!have.includes(n));
+    if(gone.length)L.push("Etapas quitadas: "+gone.join(", "));
+    const keptOrder=arr.filter(s=>!s.isNew).map(s=>s.orig);
+    const origOrder=kept.filter(n=>have.includes(n));
+    L.push(JSON.stringify(keptOrder)===JSON.stringify(origOrder)?"Orden: sin cambios respecto de la propuesta.":"Orden: modificado respecto de la propuesta.");
+    L.push("");
+  }
+  const n=$("gen-note").value.trim();if(n){L.push("COMENTARIO GENERAL");L.push(n);L.push("")}
+  return L.join("\n");
+}
+$("gen").onclick=async()=>{
+  const t=summary();const o=$("out");o.value=t;o.hidden=false;
+  let ok=false;
+  try{await navigator.clipboard.writeText(t);ok=true}catch(e){}
+  if(!ok){o.focus();o.select();try{ok=document.execCommand("copy")}catch(e){}}
+  const m=$("okmsg");m.textContent=ok?"Copiado ✓ Pegalo en un mail o WhatsApp":"Seleccioná el texto de abajo y copialo";m.hidden=false;
+};
+const WA="5491166478496";
+function waText(){
+  const L=["*Etapas de seguimiento: mi versión*",""];
+  for(const k of ["imp","exp"]){
+    L.push("*"+LABEL[k].toUpperCase()+"*");
+    S[k].forEach((x,i)=>{
+      const f=[];
+      if(x.isNew)f.push("nueva");else if(x.name.trim()!==x.orig)f.push("antes: "+x.orig);
+      if(!x.client)f.push("solo interna");
+      L.push((i+1)+". "+x.name.trim()+(f.length?" ("+f.join(", ")+")":"")+(x.note.trim()?"\n    💬 "+x.note.trim():""));
+    });
+    const have=S[k].filter(x=>!x.isNew).map(x=>x.orig);
+    const gone=BASE[k].map(b=>b[0]).filter(n=>!have.includes(n));
+    if(gone.length)L.push("Quitadas: "+gone.join(", "));
+    L.push("");
+  }
+  const n=$("gen-note").value.trim();if(n)L.push("Comentario: "+n);
+  return L.join("\n").trim();
+}
+function refreshWa(){$("wa").href="https://wa.me/"+WA+"?text="+encodeURIComponent(waText())}
+$("gen-note").addEventListener("input",refreshWa);
+refreshWa();
+render();
+</script>
+
+</body>
+</html>
